@@ -1,0 +1,113 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "URL Shortener API",
+        "version": "1.0",
+        "description": "This is a URL shortener API built with Golang and Gin.",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Mahri Ilmedova",
+            "email": "ilmedovamahri2@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/shorten": {
+            "post": {
+                "summary": "Shorten a given URL and store it in the database",
+                "description": "Shorten a URL",
+                "operationId": "shortenURLHandler",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "request",
+                        "in": "body",
+                        "description": "The URL to shorten",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ShortenRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully shortened the URL",
+                        "schema": {
+                            "$ref": "#/definitions/ShortenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/{short}": {
+            "get": {
+                "summary": "Resolve a shortened URL to the original URL",
+                "description": "Resolve a short URL",
+                "operationId": "resolveURLHandler",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "short",
+                        "in": "path",
+                        "description": "Short URL identifier",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirects to the original URL"
+                    },
+                    "404": {
+                        "description": "Short URL not found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ShortenRequest": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "example": "https://example.com"
+                }
+            },
+            "required": ["url"]
+        },
+        "ShortenResponse": {
+            "type": "object",
+            "properties": {
+                "shortened_url": {
+                    "type": "string",
+                    "example": "http://localhost:8080/abcd1234"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "URL not found"
+                }
+            }
+        }
+    }
+}
